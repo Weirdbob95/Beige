@@ -126,7 +126,7 @@ public class World extends Behavior {
     }
 
     int desiredLOD(Vector2i pos) {
-        return (int) chunkToCenterPos(pos).sub(Camera.camera.position).length() / 400;
+        return (int) chunkToCenterPos(pos).sub(Camera.camera.position).length() / 500;
     }
 
     public static Vector3d chunkToPos(Vector2i pos) {

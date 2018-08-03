@@ -14,13 +14,14 @@ public class BufferTexture implements Activatable {
         this.type = type;
         bo = new BufferObject(GL_TEXTURE_BUFFER, data);
         t = new Texture(texNum, GL_TEXTURE_BUFFER);
+        t.activate();
+        glTexBuffer(GL_TEXTURE_BUFFER, type, bo.bufferObject);
         bo.deactivate();
     }
 
     @Override
     public void activate() {
         t.activate();
-        glTexBuffer(GL_TEXTURE_BUFFER, type, bo.bufferObject);
     }
 
     @Override

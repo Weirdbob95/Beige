@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
 import org.joml.Vector3i;
+import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.*;
 
 public class ShaderProgram implements Activatable {
@@ -21,16 +22,19 @@ public class ShaderProgram implements Activatable {
      * @param fragmentShaderSource The source code of the fragment shader.
      */
     public ShaderProgram(String vertexShaderSource, String fragmentShaderSource) {
-        // Create vertex shader
         int vertexShader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertexShader, vertexShaderSource);
         glCompileShader(vertexShader);
-        // TODO: Check if it compiles correctly
+        if (glGetShaderi(vertexShader, GL_COMPILE_STATUS) != GL_TRUE) {
+            throw new RuntimeException("Vertex shader doesn't compile:\n" + glGetShaderInfoLog(vertexShader));
+        }
 
         int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragmentShader, fragmentShaderSource);
         glCompileShader(fragmentShader);
-        // TODO: Check if it compiles correctly
+        if (glGetShaderi(fragmentShader, GL_COMPILE_STATUS) != GL_TRUE) {
+            throw new RuntimeException("Fragment shader doesn't compile:\n" + glGetShaderInfoLog(fragmentShader));
+        }
 
         shaderProgram = glCreateProgram();
         glAttachShader(shaderProgram, vertexShader);

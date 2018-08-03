@@ -1,42 +1,41 @@
 package chunk;
 
-import java.util.Iterator;
-import java.util.TreeMap;
 import org.joml.Vector3d;
 import org.joml.Vector3i;
+import util.IntMap;
 import static util.MathUtils.AIR_COLOR;
 
 public class BlockColumns {
 
     public final int size;
-    private final TreeMap<Integer, Integer>[][] blockColumns;
+    private final IntMap[][] blockColumns;
 
     private boolean recomputeMinMax = true;
     private int minZ, maxZ;
 
     public BlockColumns(int size) {
         this.size = size;
-        blockColumns = new TreeMap[size][size];
+        blockColumns = new IntMap[size][size];
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
-                blockColumns[x][y] = new TreeMap();
+                blockColumns[x][y] = new IntMap();
             }
         }
     }
 
     public boolean blockRangeEquals(int x, int y, int zMin, int zMax, int color) {
-        return columnAt(x, y).subMap(zMin, zMax).isEmpty() && getBlock(x, y, zMax) == color;
+        return columnAt(x, y).rangeSize(zMin, zMax - 1) == 0 && getBlock(x, y, zMax) == color;
     }
 
-    private TreeMap<Integer, Integer> columnAt(int x, int y) {
+    private IntMap columnAt(int x, int y) {
         return blockColumns[x + 1][y + 1];
     }
 
-    private static int columnValueAt(TreeMap<Integer, Integer> c, int z) {
+    private static int columnValueAt(IntMap c, int z) {
         if (c.isEmpty() || c.lastKey() < z) {
             return AIR_COLOR;
         } else {
-            return c.ceilingEntry(z).getValue();
+            return c.ceilingValue(z);
         }
     }
 
@@ -87,7 +86,7 @@ public class BlockColumns {
 
     public void setBlockRange(int x, int y, int zMin, int zMax, int color) {
         int prevLowerColor = getBlock(x, y, zMin - 1);
-        columnAt(x, y).subMap(zMin, true, zMax, true).clear();
+        columnAt(x, y).clearRange(zMin, zMax);
         if (getBlock(x, y, zMax) != color) {
             columnAt(x, y).put(zMax, color);
         }
@@ -98,25 +97,17 @@ public class BlockColumns {
     }
 
     public void setBlockRangeInfinite(int x, int y, int zMax, int color) {
-        columnAt(x, y).headMap(zMax, true).clear();
+        columnAt(x, y).clearRange(Integer.MIN_VALUE, zMax);
         if (getBlock(x, y, zMax) != color) {
             columnAt(x, y).put(zMax, color);
         }
         recomputeMinMax = true;
     }
 
-    private static void simplifyColumn(TreeMap<Integer, Integer> c) {
-        if (c.size() < 2) {
-            return;
-        }
-        Iterator<Integer> i = c.descendingKeySet().iterator();
-        int prevZ = i.next();
-        while (i.hasNext()) {
-            int z = i.next();
-            if (c.get(z).equals(c.get(prevZ))) {
-                i.remove();
-            } else {
-                prevZ = z;
+    public void simplify() {
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                columnAt(x, y).simplify();
             }
         }
     }
@@ -135,4 +126,5 @@ public class BlockColumns {
         }
         return false;
     }
+
 }

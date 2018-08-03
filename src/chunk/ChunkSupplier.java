@@ -9,8 +9,8 @@ import util.Noise;
 public class ChunkSupplier {
 
     private static final double BIOME_FREQUENCY = 1 / 2000.;
-    private static final double DETAIL_FREQUENCY = 1 / 250.;
-    private static final int DETAIL_OCTAVES = 6;
+    private static final double DETAIL_FREQUENCY = 1 / 500.;
+    private static final int DETAIL_OCTAVES = 8;
     private static final double SCALE = .2;
 
     public static final double MAX_Z = 2. * (SCALE / BIOME_FREQUENCY) / SIDE_LENGTH;
@@ -31,7 +31,7 @@ public class ChunkSupplier {
 
         double[][] temperatureArray = downsample(chunkX, chunkY, biomeDownsampling, (x, y) -> new Noise(seed).perlin(x, y, BIOME_FREQUENCY));
         double[][] humidityArray = downsample(chunkX, chunkY, biomeDownsampling, (x, y) -> new Noise(seed + 1).perlin(x, y, BIOME_FREQUENCY));
-        double[][] elevationArray = downsample(chunkX, chunkY, biomeDownsampling, (x, y) -> new Noise(seed + 2).multi(x, y, 3, BIOME_FREQUENCY));
+        double[][] elevationArray = downsample(chunkX, chunkY, biomeDownsampling, (x, y) -> new Noise(seed + 2).multi(x, y, 3, BIOME_FREQUENCY / 10));
         //double[][] elevationArray = downsample(chunkX, chunkY, biomeDownsampling, (x, y) -> new Noise(seed + 2).perlin(x, y, BIOME_FREQUENCY));
         double[][] detailArray = downsample(chunkX, chunkY, detailDownsampling, (x, y) -> new Noise(seed + 3).multi(x, y, DETAIL_OCTAVES, DETAIL_FREQUENCY));
         int[][] biomes = {
@@ -50,7 +50,7 @@ public class ChunkSupplier {
                 double elevation = sample(elevationArray, i, j, biomeDownsampling / lod);
                 double detail = sample(detailArray, i, j, detailDownsampling / lod);
 
-                detail *= (elevation + .15) * (temperature + .5) * .3;
+                detail *= (elevation + .15) * (temperature + .5) * .8;
                 elevation *= (temperature + .15);
 
                 double cutoffAdd = (lod == 1 || (i >= 0 && j >= 0 && i < SIDE_LENGTH / lod && j < SIDE_LENGTH / lod)) ? 0 : lod;
@@ -116,7 +116,7 @@ public class ChunkSupplier {
     }
 
     private static double sigmoid(double x) {
-        double sharpness = 10, mix = .5;
+        double sharpness = 5, mix = .5;
         return mix * s1(x) + (1 - mix) * s2(x, sharpness);
         //return mix * x + (1 - mix) / (Math.sinh(sharpness) / Math.tanh(sharpness * x) - Math.cosh(sharpness) + 1);
         //return mix * x + (1 - mix) * (1 - Math.exp(2*sharpness*x)) / (1 - Math.exp(sharpness) / (1 + Math.exp(sharpness * (2 * x - 1))));

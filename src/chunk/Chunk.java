@@ -18,7 +18,7 @@ import static util.MathUtils.*;
 
 public class Chunk extends Behavior {
 
-    public static final int SIDE_LENGTH = 128;
+    public static final int SIDE_LENGTH = 256;
     static final int SIDE_LENGTH_2 = (SIDE_LENGTH + 2);
 
     public Vector2i pos;

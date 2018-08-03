@@ -1,13 +1,12 @@
 package opengl;
 
 import java.nio.IntBuffer;
+import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.glEnable;
-import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -20,7 +19,7 @@ public class Window {
     public static void initGLFW() {
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
-        GLFWErrorCallback.createPrint(System.err).set();
+        //GLFWErrorCallback.createPrint(System.err).set();
 
         // Initialize GLFW. Most GLFW functions will not work before doing this.
         if (!glfwInit()) {
@@ -38,7 +37,7 @@ public class Window {
 
         glEnable(GL_DEPTH_TEST);
 
-        GLUtil.setupDebugMessageCallback();
+        //GLUtil.setupDebugMessageCallback();
     }
 
     public static void cleanupGLFW() {
@@ -46,7 +45,7 @@ public class Window {
 
         // Terminate GLFW and free the error callback
         glfwTerminate();
-        glfwSetErrorCallback(null).free();
+        //glfwSetErrorCallback(null).free();
     }
 
     private final long handle;

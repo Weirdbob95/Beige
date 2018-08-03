@@ -14,7 +14,7 @@ uniform samplerBuffer colors;
 uniform samplerBuffer shadeIndices;
 uniform samplerBuffer shades;
 
-const int SIDE_LENGTH = 128;
+const int SIDE_LENGTH = 256;
 const vec4 FOG_COLOR = vec4(.6, .8, 1, 1);
 
 void main() {
@@ -39,7 +39,7 @@ void main() {
     float s4 = texelFetch(shades, shadeIndex + int(texPos.x + 1) + int(size.x + 1) * int(texPos.y + 1)).r;
     vec2 t = smoothstep(0, 1, fract(texPos)); // fract(texPos); //
     float ao = mix(mix(s1, s2, t.x), mix(s3, s4, t.x), t.y);
-    ao = mix(1, ao, exp(-lod + 1));
+    //ao = mix(1, ao, exp(-lod + 1));
 
     float shadow = 1 + (dot(normal, vec3(.1, .3, 1)) - 1) / 5;
     float fog = 1.0 - clamp(exp(-gl_FragCoord.z / gl_FragCoord.w * .002), 0.0, 1.0);

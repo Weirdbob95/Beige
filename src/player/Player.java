@@ -20,8 +20,8 @@ public class Player extends Behavior {
     public boolean sprint;
 
     public Player() {
-        acceleration.acceleration = new Vector3d(0, 0, -20);
-        physics.hitboxSize = new Vector3d(.7, .7, 1.2);
+        acceleration.acceleration = new Vector3d(0, 0, -32);
+        physics.hitboxSize = new Vector3d(.3, .3, .9);
 
         System.out.println(getSubBehaviors());
     }
@@ -29,7 +29,7 @@ public class Player extends Behavior {
     @Override
     public void update(double dt) {
 
-        Vector3d desCamPos = position.position.add(new Vector3d(0, 0, 1), new Vector3d());
+        Vector3d desCamPos = position.position.add(new Vector3d(0, 0, .6), new Vector3d());
 //        if (camera.position.distance(desCamPos) > 10 * dt) {
 //            camera.position.lerp(desCamPos, Math.max(10 * dt / camera.position.distance(desCamPos), 1 - Math.pow(.1, dt)));
 //        } else {
@@ -53,13 +53,13 @@ public class Player extends Behavior {
         if (Input.keyJustPressed(GLFW_KEY_LEFT_CONTROL)) {
             sprint = !sprint;
         }
-        double speed = sprint ? 100 : 8;
+        double speed = sprint ? 100 : 4.3;
 
         Vector3d forwards = camera.facing();
-        //if (!sprint) {
-        forwards.z = 0;
-        forwards.normalize();
-        //}
+        if (!sprint) {
+            forwards.z = 0;
+            forwards.normalize();
+        }
         Vector3d sideways = camera.up.cross(forwards, new Vector3d());
 
         Vector3d idealVel = new Vector3d();
@@ -78,9 +78,10 @@ public class Player extends Behavior {
         if (idealVel.lengthSquared() > 0) {
             idealVel.normalize().mul(speed);
         }
-        //if (!sprint) {
-        idealVel.z = velocity.velocity.z;
-        //}
+
+        if (!sprint) {
+            idealVel.z = velocity.velocity.z;
+        }
 
         velocity.velocity.lerp(idealVel, 1 - Math.pow(.005, dt));
 
